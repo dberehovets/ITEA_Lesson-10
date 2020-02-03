@@ -1,5 +1,7 @@
 from mongoengine import *
 
+connect("shop")
+
 
 class Category(Document):
 
@@ -14,7 +16,7 @@ class Category(Document):
         kwargs["subcategories"] = []
         if kwargs.get("parent"):
             kwargs["is_root"] = False
-        Product(**kwargs).save()
+        return Category(**kwargs).save()
 
     def add_subcategory(self, cat_obj):
         cat_obj.parent = self
@@ -44,3 +46,35 @@ class Product(Document):
         product.views += 1
         product.save()
         return product
+
+
+if __name__ == "__main__":
+
+    Category(title="Electronics", description="Computers, Smartphones, etc.").save()
+    Category(title="Food", description="Everything you could eat.").save()
+    Category(title="Cosmetics", description="Treat your body with love.").save()
+    Category(title="Clothes", description="Wear the best").save()
+
+    Product(title="IPhone",
+            description="Good phone",
+            price=20000,
+            category=Category.objects(title="Electronics").get(),
+            amount=40).save()
+
+    Product(title="Shorts",
+            description="Summer clothes",
+            price=300,
+            category=Category.objects(title="Clothes").get(),
+            amount=20).save()
+
+    Product(title="Pizza",
+            description="Bad food",
+            price=150,
+            category=Category.objects(title="Food").get(),
+            amount=5).save()
+
+    Product(title="Water",
+            description="Clean your face",
+            price=50,
+            category=Category.objects(title="Cosmetics").get(),
+            amount=8).save()
